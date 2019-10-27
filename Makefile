@@ -1,6 +1,6 @@
 # check .env files and create external network
 init: check-traefik-env check-orchestrator-env
-	docker network create --overlay ${TRAEFIK_PUBLIC_NETWORK}
+	docker network create -d overlay ${TRAEFIK_PUBLIC_NETWORK}
 
 ###
 # Traefik
