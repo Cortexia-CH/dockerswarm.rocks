@@ -1,3 +1,7 @@
+# check .env files and create external network
+init: check-traefik-env check-orchestrator-env
+	docker network create --overlay ${TRAEFIK_PUBLIC_NETWORK}
+
 ###
 # Traefik
 
@@ -73,7 +77,6 @@ ifeq ($(wildcard docker-stack.yml),)
 endif
 
 pull: check-stack
-	docker network create $(TRAEFIK_PUBLIC_NETWORK) || true
 	docker-compose -f docker-stack.yml pull
 
 # shortcut to build docker-stack for both traefik and orchestrators
