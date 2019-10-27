@@ -19,6 +19,7 @@ services:
         - "traefik.http.routers.swarmpit.entrypoints=websecure"
         - "traefik.http.routers.swarmpit.tls.certresolver=cloudflare"
         - "traefik.http.routers.swarmpit.rule=Host(`${SWARMPIT_DOMAIN}`)"
+        - "traefik.http.services.swarmpit.loadbalancer.server.port=8080"
 
   db:
     deploy:
