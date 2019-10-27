@@ -20,7 +20,7 @@ services:
           - node.platform.os == linux
 
   portainer:
-    command: -H tcp://tasks.agent:9001 --tlsskipverify
+    command: -H tcp://tasks.portainer-agent:9001 --tlsskipverify
     networks:
       - traefik
       - agent_network
