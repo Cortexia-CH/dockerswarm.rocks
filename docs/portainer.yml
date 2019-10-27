@@ -1,9 +1,6 @@
 version: '3.7'
 
 networks:
-  agent-network:
-    attachable: true
-
   traefik:
     external: true
     name: ${TRAEFIK_PUBLIC_NETWORK}
@@ -14,6 +11,7 @@ volumes:
 services:
   portainer:
     image: portainer/portainer
+    volumes:
+      - portainer-data:/data
     networks:
-      - agent-network
       - traefik
