@@ -12,6 +12,8 @@ services:
       - '--providers.docker.exposedByDefault=false'
       - '--providers.docker.network=${TRAEFIK_PUBLIC_NETWORK}'
       - '--providers.docker.swarmMode=true'
+      # activate WEBMIN
+      - '--api.dashboard'
       # Listen to incoming HTTP requests (80)
       - '--entryPoints.web.address=:80'
       # Listen to HTTPS (443)
@@ -48,3 +50,4 @@ services:
         - "traefik.http.routers.traefik-webmin.tls.certresolver=cloudflare"
         - "traefik.http.routers.traefik-webmin.service=api@internal"
         - "traefik.http.routers.traefik-webmin.middlewares=ask-basic-auth"
+        - "traefik.http.services.traefik-webmin.loadbalancer.server.port=8080"
