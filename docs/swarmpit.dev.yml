@@ -1,0 +1,10 @@
+version: '3.7'
+
+services:
+  app:
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=${TRAEFIK_PUBLIC_NETWORK}"
+      - "traefik.http.routers.swarmpit.entrypoints=websecure"
+      - "traefik.http.routers.swarmpit.tls.certresolver=cloudflare"
+      - "traefik.http.routers.swarmpit.rule=Host(`${SWARMPIT_DOMAIN}`)"

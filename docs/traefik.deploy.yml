@@ -1,0 +1,50 @@
+version: '3.7'
+
+services:
+  traefik:
+    command:
+      - '--global.checkNewVersion=false'
+      - '--global.sendAnonymousUsage=false'
+      # DOCKER (Dynamic config)
+      - '--providers.docker'
+      - '--providers.docker.watch=true'
+      - '--providers.docker.endpoint=unix:///var/run/docker.sock'
+      - '--providers.docker.exposedByDefault=false'
+      - '--providers.docker.network=${TRAEFIK_PUBLIC_NETWORK}'
+      - '--providers.docker.swarmMode=true'
+      # Listen to incoming HTTP requests (80)
+      - '--entryPoints.web.address=:80'
+      # Listen to HTTPS (443)
+      - '--entryPoints.websecure.address=:443'
+      - '--certificatesresolvers.cloudflare.acme.email=${LETSENCRYPT_EMAIL}'
+      - '--certificatesresolvers.cloudflare.acme.storage=/letsencrypt/acme.json'
+      - '--certificatesresolvers.cloudflare.acme.dnschallenge=true'
+      - '--certificatesresolvers.cloudflare.acme.dnschallenge.provider=cloudflare'
+      # Listen to other services
+      - '--entryPoints.ssh.address=:22'
+      - '--entryPoints.pg.address=:5432'
+      # DEBUG
+      - '--log.level=INFO'
+
+    deploy:
+      placement:
+        constraints:
+          - node.role == manager
+        preferences:
+          - spread: node.id
+      labels:
+        - "traefik.enable=true"
+        - "traefik.docker.network=${TRAEFIK_PUBLIC_NETWORK}"
+        - "traefik.docker.lbswarm=true"
+        # global redirect to https
+        - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
+        - "traefik.http.routers.redirects.rule=hostregexp(`{host:.+}`)"
+        - "traefik.http.routers.redirects.entrypoints=web"
+        - "traefik.http.routers.redirects.middlewares=redirect-to-https"
+        # webmin protected by BasicAuth
+        - "traefik.http.middlewares.ask-basic-auth.basicauth.users=${BASIC_AUTH}"
+        - "traefik.http.routers.traefik-webmin.rule=Host(`${TRAEFIK_DOMAIN}`)"
+        - "traefik.http.routers.traefik-webmin.entrypoints=websecure"
+        - "traefik.http.routers.traefik-webmin.tls.certresolver=cloudflare"
+        - "traefik.http.routers.traefik-webmin.service=api@internal"
+        - "traefik.http.routers.traefik-webmin.middlewares=ask-basic-auth"

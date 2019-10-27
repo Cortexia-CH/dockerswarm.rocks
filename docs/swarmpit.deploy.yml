@@ -1,0 +1,45 @@
+version: '3.7'
+
+services:
+  app:
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 1024M
+        reservations:
+          cpus: '0.25'
+          memory: 512M
+      placement:
+        constraints:
+          - node.role == manager
+      labels:
+        - "traefik.enable=true"
+        - "traefik.docker.network=${TRAEFIK_PUBLIC_NETWORK}"
+        - "traefik.http.routers.swarmpit.entrypoints=websecure"
+        - "traefik.http.routers.swarmpit.tls.certresolver=cloudflare"
+        - "traefik.http.routers.swarmpit.rule=Host(`${SWARMPIT_DOMAIN}`)"
+
+  db:
+    deploy:
+      resources:
+        limits:
+          cpus: '0.30'
+          memory: 512M
+        reservations:
+          cpus: '0.15'
+          memory: 256M
+      placement:
+        constraints:
+          - node.labels.swarmpit.db-data == true
+
+  agent:
+    deploy:
+      mode: global
+      resources:
+        limits:
+          cpus: '0.10'
+          memory: 64M
+        reservations:
+          cpus: '0.05'
+          memory: 32M

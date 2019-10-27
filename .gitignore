@@ -1,3 +1,7 @@
 site
 .netlify
 .vscode
+
+docker-stack.yml
+.traefik.env
+.webmin.env
