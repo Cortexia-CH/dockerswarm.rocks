@@ -28,7 +28,7 @@ services:
       - '--entryPoints.pg.address=:5432'
       # DEBUG
       # - '--log.level=DEBUG'
-      # - '--certificatesresolvers.cloudflare.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory'
+      - '--certificatesresolvers.cloudflare.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory'
 
     labels:
       - "traefik.enable=true"
