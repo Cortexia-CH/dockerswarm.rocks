@@ -5,7 +5,7 @@ ps:
 	docker ps --format 'table {{.Names}}\t{{.Image}}\t{{.Ports}}\t{{.Status}} ago'
 
 init: check-traefik-env check-orchestrator-env
-	docker network create -d overlay ${TRAEFIK_PUBLIC_NETWORK} || true
+	docker network create ${TRAEFIK_PUBLIC_NETWORK} || true
 
 config: check-traefik-env check-orchestrator-env
 	docker-compose \
@@ -20,29 +20,20 @@ config: check-traefik-env check-orchestrator-env
 		-f docs/swarmpit.dev.yml \
 	config > docker-stack-orchestrator.yml
 
-	docker-compose \
-		-f docs/traefik.yml \
-		-f docs/traefik.dev.yml \
-		-f docs/portainer.yml \
-		-f docs/swarmpit.yml \
-		-f docs/portainer.dev.yml \
-		-f docs/swarmpit.dev.yml \
-	config > docker-stack.yml
-
 pull: check-stack
-	docker-compose -f docker-stack.yml pull $(services)
+	docker-compose -f docker-stack-traefik.yml pull $(services)
 
 up: check-stack
-	docker-compose -f docker-stack.yml up -d $(services)
+	docker-compose -f docker-stack-traefik.yml up -d $(services)
 
 down: check-stack
-	docker-compose -f docker-stack.yml down
+	docker-compose -f docker-stack-traefik.yml down
 
 stop: check-stack
-	docker-compose -f docker-stack.yml stop $(services)
+	docker-compose -f docker-stack-traefik.yml stop $(services)
 
 logs: check-stack
-	docker-compose -f docker-stack.yml logs --tail 10 -f $(services)
+	docker-compose -f docker-stack-traefik.yml logs --tail 10 -f $(services)
 
 # no build
 
@@ -89,8 +80,8 @@ export
 endif
 
 check-stack: check-traefik-env check-orchestrator-env
-ifeq ($(wildcard docker-stack.yml),)
-	@echo "docker-stack.yml file is missing"
+ifeq ($(wildcard docker-stack-traefik.yml),)
+	@echo "docker-stack-traefik.yml file is missing"
 	@echo ">> use \033[1mmake \033[32mtraefik\033[37m|\033[32morchestrator\033[0m"
 	@exit 1
 endif
