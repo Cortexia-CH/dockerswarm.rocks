@@ -5,7 +5,6 @@ ps:
 	docker ps --format 'table {{.Names}}\t{{.Image}}\t{{.Ports}}\t{{.Status}} ago'
 
 init: check-traefik-env check-orchestrator-env
-	docker network create ${TRAEFIK_PUBLIC_NETWORK} || true
 
 config: check-traefik-env check-orchestrator-env
 	docker-compose \
