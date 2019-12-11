@@ -51,7 +51,9 @@ deploy: check-traefik-env check-orchestrator-env
 		-f docs/portainer.deploy.yml \
 		-f docs/swarmpit.deploy.yml \
 	config > docker-stack-orchestrator.yml
+	docker-auto-labels docker-stack-orchestrator.yml
 	docker stack deploy -c docker-stack-orchestrator.yml $(ORCHESTRATOR_STACKNAME)
+	
 
 ###
 # Helpers for initialization
