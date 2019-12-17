@@ -38,11 +38,6 @@ services:
         - "traefik.enable=true"
         - "traefik.docker.network=${TRAEFIK_PUBLIC_NETWORK}"
         - "traefik.docker.lbswarm=true"
-        # global redirect to https
-        - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
-        - "traefik.http.routers.redirects.rule=hostregexp(`{host:.+}`)"
-        - "traefik.http.routers.redirects.entrypoints=web"
-        - "traefik.http.routers.redirects.middlewares=redirect-to-https"
         # webmin protected by BasicAuth
         - "traefik.http.middlewares.ask-basic-auth.basicauth.users=${BASIC_AUTH}"
         - "traefik.http.routers.traefik-webmin.rule=Host(`${TRAEFIK_DOMAIN}`)"
@@ -51,3 +46,16 @@ services:
         - "traefik.http.routers.traefik-webmin.service=api@internal"
         - "traefik.http.routers.traefik-webmin.middlewares=ask-basic-auth"
         - "traefik.http.services.traefik-webmin.loadbalancer.server.port=8080"
+        # proxy unit requests
+        - "traefik.http.middlewares.unit-redirect.redirectregex.regex=^https?//([^/]*)/(.*)"
+        - "traefik.http.middlewares.unit-redirect.redirectregex.replacement=http//$${1}/$${2}"
+        - "traefik.http.routers.unit-proxy.rule=hostregexp(`api-eu.pusher.com`, `logs7.papertrailapp.com`, `bitbucket.org`, `sentry.io`, `mailgun.org`)"
+        - "traefik.http.routers.unit-proxy.entrypoints=web"
+        - "traefik.http.routers.unit-proxy.priority=100"
+        - "traefik.http.routers.unit-proxy.middlewares=unit-redirect"
+        # global redirect to https
+        - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
+        - "traefik.http.routers.redirects.rule=hostregexp(`{host:.+}`)"
+        - "traefik.http.routers.redirects.entrypoints=web"
+        - "traefik.http.routers.redirects.priority=10"
+        - "traefik.http.routers.redirects.middlewares=redirect-to-https"
