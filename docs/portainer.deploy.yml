@@ -30,7 +30,6 @@ services:
       placement:
         constraints:
           - node.role == manager
-          - node.labels.portainer.portainer-data == true
       labels:
         - "traefik.enable=true"
         - "traefik.docker.network=${TRAEFIK_PUBLIC_NETWORK}"
