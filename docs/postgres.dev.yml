@@ -2,6 +2,7 @@ version: '3.7'
 
 services:
   pgadmin:
+    restart: always
     labels:
       - "traefik.enable=true"
       - "traefik.docker.network=${TRAEFIK_PUBLIC_NETWORK}"
