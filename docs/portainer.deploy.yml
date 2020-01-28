@@ -35,5 +35,5 @@ services:
         - "traefik.docker.network=${TRAEFIK_PUBLIC_NETWORK}"
         - "traefik.http.routers.portainer.entrypoints=websecure"
         - "traefik.http.routers.portainer.tls.certresolver=cloudflare"
-        - "traefik.http.routers.portainer.rule=Host(`${PORTAINER_DOMAIN}`)"
+        - "traefik.http.routers.portainer.rule=Host(`${PORTAINER_CNAME}`)"
         - "traefik.http.services.portainer.loadbalancer.server.port=9000"

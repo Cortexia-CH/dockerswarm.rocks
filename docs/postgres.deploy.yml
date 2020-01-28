@@ -1,0 +1,23 @@
+version: '3.7'
+
+services:
+  postgres:
+    deploy:
+      placement:
+        constraints:
+        # mongo is already running on manager... better to be on another node
+        - node.role != manager
+
+  pgadmin:
+    deploy:
+      labels:
+        - "traefik.enable=true"
+        - "traefik.docker.network=${TRAEFIK_PUBLIC_NETWORK}"
+        - "traefik.http.routers.pgadmin-${PG_STACKNAME}.entrypoints=websecure"
+        - "traefik.http.routers.pgadmin-${PG_STACKNAME}.rule=Host(`${PGADMIN_CNAME}`)"
+        - "traefik.http.routers.pgadmin-${PG_STACKNAME}.tls.certresolver=cloudflare"
+        - "traefik.http.services.pgadmin-${PG_STACKNAME}.loadbalancer.server.port=80"
+    volumes:
+      - type: bind
+        source: /mnt/${PG_STACKNAME}/pgadmin
+        target: /var/lib/pgadmin/data

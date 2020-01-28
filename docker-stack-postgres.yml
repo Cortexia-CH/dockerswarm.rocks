@@ -1,0 +1,31 @@
+networks:
+  traefik:
+    external: true
+    name: traefik-public
+services:
+  pgadmin:
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin
+      PGADMIN_DEFAULT_PASSWORD: admin
+    image: dpage/pgadmin4
+    labels:
+      traefik.docker.network: traefik-public
+      traefik.enable: "true"
+      traefik.http.routers.pgadmin-pg.entrypoints: websecure
+      traefik.http.routers.pgadmin-pg.rule: Host(`pgadmin.local`)
+      traefik.http.routers.pgadmin-pg.tls.certresolver: cloudflare
+      traefik.http.services.pgadmin-pg.loadbalancer.server.port: '80'
+    networks:
+      traefik: {}
+    restart: always
+  postgres:
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+    image: postgres
+    networks:
+      traefik: {}
+    restart: always
+version: '3.7'
+
