@@ -61,6 +61,7 @@ deploy: check-traefik-env check-orchestrator-env check-postgres-env
 		-f docs/postgres.yml \
 		-f docs/postgres.deploy.yml \
 	config > docker-stack-postgres.yml
+	docker-auto-labels docker-stack-postgres.yml
 	docker stack deploy -c docker-stack-postgres.yml $(PG_STACKNAME)
 
 	docker-compose \
