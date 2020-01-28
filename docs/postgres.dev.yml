@@ -1,0 +1,11 @@
+version: '3.7'
+
+services:
+  pgadmin:
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=${TRAEFIK_PUBLIC_NETWORK}"
+      - "traefik.http.routers.pgadmin-${PG_STACKNAME}.entrypoints=websecure"
+      - "traefik.http.routers.pgadmin-${PG_STACKNAME}.rule=Host(`${PGADMIN_CNAME}`)"
+      - "traefik.http.routers.pgadmin-${PG_STACKNAME}.tls.certresolver=cloudflare"
+      - "traefik.http.services.pgadmin-${PG_STACKNAME}.loadbalancer.server.port=80"
