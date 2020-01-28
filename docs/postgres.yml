@@ -6,6 +6,7 @@ networks:
     name: ${TRAEFIK_PUBLIC_NETWORK}
   pg_network:
     name: ${POSTGRES_NETWORK}
+    attachable: true
 
 volumes:
   postgres-data:
