@@ -4,6 +4,7 @@ site
 
 docker-stack.yml
 docker-stack-traefik.yml
+docker-stack-postgres.yml
 docker-stack-orchestrator.yml
 .traefik.env
 .postgres.env
