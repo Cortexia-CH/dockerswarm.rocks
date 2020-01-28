@@ -4,6 +4,8 @@ networks:
   traefik:
     external: true
     name: ${TRAEFIK_PUBLIC_NETWORK}
+  pg_network:
+    name: ${POSTGRES_NETWORK}
 
 services:
   postgres:
