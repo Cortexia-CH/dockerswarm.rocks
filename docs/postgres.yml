@@ -15,7 +15,7 @@ services:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     networks:
-      - traefik
+      - pg_network
 
   pgadmin:
     image: dpage/pgadmin4
@@ -24,5 +24,4 @@ services:
       - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_DEFAULT_PASSWORD}
     networks:
       - traefik
-
-
+      - pg_network
