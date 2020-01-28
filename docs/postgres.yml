@@ -7,9 +7,14 @@ networks:
   pg_network:
     name: ${POSTGRES_NETWORK}
 
+volumes:
+  postgres-data:
+
 services:
   postgres:
     image: postgres
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
     environment:
       - POSTGRES_DB=${POSTGRES_DB}
       - POSTGRES_USER=${POSTGRES_USER}
