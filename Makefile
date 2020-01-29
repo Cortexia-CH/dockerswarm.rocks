@@ -80,6 +80,48 @@ deploy: check-traefik-env check-orchestrator-env check-postgres-env
 	docker stack deploy -c docker-stack-orchestrator.yml $(ORCHESTRATOR_STACKNAME)
 	
 
+ip-tables:
+	# traefik TCP routing is limited:
+	# - it cannot filter by domain -> different environments need different ports
+	# - it cannot use middleware -> use of iptables
+
+	# Therefore, this command is used to setup the firewall on the node manager (harold), thanks to iptables rules
+	# They block the traffick to mongodb containers, except for given IPs:
+	# - infomaniak prod server
+	# - hymexia network
+	# - localhost (to be able to run from harold)
+	#
+	#
+	## DEV
+	# clean existing rules
+	sudo iptables -D DOCKER -d $(TRAEFIK_CONTAINER_IP)/32 ! -i docker_gwbridge -o docker_gwbridge -p tcp -m tcp --dport $(MONGODB_PORT_DEV) -j ACCEPT || true
+	sudo iptables -D DOCKER -d $(TRAEFIK_CONTAINER_IP)/32 ! -i docker_gwbridge -s 83.166.154.157 -o docker_gwbridge -p tcp -m tcp --dport $(MONGODB_PORT_DEV) -j ACCEPT || true
+	sudo iptables -D DOCKER -d $(TRAEFIK_CONTAINER_IP)/32 ! -i docker_gwbridge -s 46.140.105.162 -o docker_gwbridge -p tcp -m tcp --dport $(MONGODB_PORT_DEV) -j ACCEPT || true
+	sudo iptables -D DOCKER -d $(TRAEFIK_CONTAINER_IP)/32 ! -i docker_gwbridge -s 127.0.0.1 -o docker_gwbridge -p tcp -m tcp --dport $(MONGODB_PORT_DEV) -j ACCEPT || true
+	sudo iptables -D DOCKER -i eth0 -p tcp -m tcp --dport $(MONGODB_PORT_DEV) -j DROP || true
+	# restrict acces
+	sudo iptables -A DOCKER -d $(TRAEFIK_CONTAINER_IP)/32 ! -i docker_gwbridge -s 83.166.154.157 -o docker_gwbridge -p tcp -m tcp --dport $(MONGODB_PORT_DEV) -j ACCEPT
+	sudo iptables -A DOCKER -d $(TRAEFIK_CONTAINER_IP)/32 ! -i docker_gwbridge -s 46.140.105.162 -o docker_gwbridge -p tcp -m tcp --dport $(MONGODB_PORT_DEV) -j ACCEPT
+	sudo iptables -A DOCKER -d $(TRAEFIK_CONTAINER_IP)/32 ! -i docker_gwbridge -s 127.0.0.1 -o docker_gwbridge -p tcp -m tcp --dport $(MONGODB_PORT_DEV) -j ACCEPT
+	sudo iptables -A DOCKER -i eth0 -p tcp -m tcp --dport 27017 -j DROP
+
+	## QA
+	# clean existing rules
+	sudo iptables -D DOCKER -d $(TRAEFIK_CONTAINER_IP)/32 ! -i docker_gwbridge -o docker_gwbridge -p tcp -m tcp --dport $(MONGODB_PORT_QA) -j ACCEPT || true
+	sudo iptables -D DOCKER -d $(TRAEFIK_CONTAINER_IP)/32 ! -i docker_gwbridge -s 83.166.154.157 -o docker_gwbridge -p tcp -m tcp --dport $(MONGODB_PORT_QA) -j ACCEPT || true
+	sudo iptables -D DOCKER -d $(TRAEFIK_CONTAINER_IP)/32 ! -i docker_gwbridge -s 46.140.105.162 -o docker_gwbridge -p tcp -m tcp --dport $(MONGODB_PORT_QA) -j ACCEPT || true
+	sudo iptables -D DOCKER -d $(TRAEFIK_CONTAINER_IP)/32 ! -i docker_gwbridge -s 127.0.0.1 -o docker_gwbridge -p tcp -m tcp --dport $(MONGODB_PORT_QA) -j ACCEPT || true
+	sudo iptables -D DOCKER -i eth0 -p tcp -m tcp --dport $(MONGODB_PORT_QA) -j DROP || true
+	# restrict acces
+	sudo iptables -A DOCKER -d $(TRAEFIK_CONTAINER_IP)/32 ! -i docker_gwbridge -s 83.166.154.157 -o docker_gwbridge -p tcp -m tcp --dport $(MONGODB_PORT_QA) -j ACCEPT
+	sudo iptables -A DOCKER -d $(TRAEFIK_CONTAINER_IP)/32 ! -i docker_gwbridge -s 46.140.105.162 -o docker_gwbridge -p tcp -m tcp --dport $(MONGODB_PORT_QA) -j ACCEPT
+	sudo iptables -A DOCKER -d $(TRAEFIK_CONTAINER_IP)/32 ! -i docker_gwbridge -s 127.0.0.1 -o docker_gwbridge -p tcp -m tcp --dport $(MONGODB_PORT_QA) -j ACCEPT
+	sudo iptables -A DOCKER -i eth0 -p tcp -m tcp --dport 27017 -j DROP
+
+	# check result
+	sudo iptables --list | grep -A 16 "Chain DOCKER (2 references)"
+
+
 ###
 # Helpers for initialization
 
