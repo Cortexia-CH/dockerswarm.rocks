@@ -21,8 +21,12 @@ services:
       # Other services
       - '${SSH_PORT}:22'
       - '${PG_PORT}:5432'
-      - target: 27017
-        published: ${MONGO_PORT}
+      - target: ${MONGO_PORT_DEV}
+        published: ${MONGO_PORT_DEV}
+        protocol: tcp
+        mode: host
+      - target: ${MONGO_PORT_QA}
+        published: ${MONGO_PORT_QA}
         protocol: tcp
         mode: host
     networks:
