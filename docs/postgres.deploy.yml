@@ -8,6 +8,12 @@ services:
         # mongo is already running on manager... better to be on another node
         - node.role != manager
         - node.labels.${PG_STACKNAME}.postgres-data == true
+      labels:
+        - "traefik.enable=true"
+        - "traefik.docker.network=${TRAEFIK_PUBLIC_NETWORK}"
+        - "traefik.tcp.routers.postgres.entrypoints=pg"
+        - "traefik.tcp.routers.postgres.rule=HostSNI(`*`)"
+        - "traefik.tcp.services.postgres.loadbalancer.server.port=5432"
 
   pgadmin:
     deploy:

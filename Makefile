@@ -85,14 +85,14 @@ ip-tables:
 	# - it cannot filter by domain -> different environments need different ports
 	# - it cannot use middleware -> use of iptables
 
-	# Therefore, this command is used to setup the firewall on the node manager (harold), thanks to iptables rules
-	# They block the traffick to mongodb containers, except for given IPs:
+	# Therefore, this command is used to setup the firewall on the node manager, thanks to iptables rules
+	# They block the traffick to DB containers, except for given IPs:
 	# - infomaniak prod server
 	# - hymexia network
-	# - localhost (to be able to run from harold)
+	# - localhost (to be able to run from node)
 	#
 	#
-	## DEV
+	## MONGO DEV
 	# clean existing rules
 	sudo iptables -D DOCKER -d $(TRAEFIK_CONTAINER_IP)/32 ! -i docker_gwbridge -o docker_gwbridge -p tcp -m tcp --dport $(MONGODB_PORT_DEV) -j ACCEPT || true
 	sudo iptables -D DOCKER -d $(TRAEFIK_CONTAINER_IP)/32 ! -i docker_gwbridge -s 83.166.154.157 -o docker_gwbridge -p tcp -m tcp --dport $(MONGODB_PORT_DEV) -j ACCEPT || true
@@ -105,7 +105,7 @@ ip-tables:
 	sudo iptables -A DOCKER -d $(TRAEFIK_CONTAINER_IP)/32 ! -i docker_gwbridge -s 127.0.0.1 -o docker_gwbridge -p tcp -m tcp --dport $(MONGODB_PORT_DEV) -j ACCEPT
 	sudo iptables -A DOCKER -i eth0 -p tcp -m tcp --dport 27017 -j DROP
 
-	## QA
+	## MONGO QA
 	# clean existing rules
 	sudo iptables -D DOCKER -d $(TRAEFIK_CONTAINER_IP)/32 ! -i docker_gwbridge -o docker_gwbridge -p tcp -m tcp --dport $(MONGODB_PORT_QA) -j ACCEPT || true
 	sudo iptables -D DOCKER -d $(TRAEFIK_CONTAINER_IP)/32 ! -i docker_gwbridge -s 83.166.154.157 -o docker_gwbridge -p tcp -m tcp --dport $(MONGODB_PORT_QA) -j ACCEPT || true
