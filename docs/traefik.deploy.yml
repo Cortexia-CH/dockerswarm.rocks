@@ -25,6 +25,7 @@ services:
       # Listen to other services
       - '--entryPoints.ssh.address=:22'
       - '--entryPoints.pg.address=:5432'
+      - '--entryPoints.mongo.address=:27017'
       # DEBUG
       - '--log.level=INFO'
 
