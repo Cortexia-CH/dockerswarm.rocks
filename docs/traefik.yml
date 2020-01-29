@@ -22,7 +22,7 @@ services:
       - '${SSH_PORT}:22'
       - '${PG_PORT}:5432'
       - target: 27017
-        published: ${MONGO_CLIENT_IP}:${MONGO_PORT}
+        published: ${MONGO_PORT}
         protocol: tcp
         mode: host
     networks:
