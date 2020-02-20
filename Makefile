@@ -56,7 +56,8 @@ logs: check-stack
 
 # no push
 
-deploy: check-traefik-env check-orchestrator-env check-postgres-env
+
+deploy-postgres: check-postgres-env
 	docker-compose \
 		-f docs/postgres.yml \
 		-f docs/postgres.deploy.yml \
@@ -64,12 +65,14 @@ deploy: check-traefik-env check-orchestrator-env check-postgres-env
 	docker-auto-labels docker-stack-postgres.yml
 	docker stack deploy -c docker-stack-postgres.yml $(PG_STACKNAME)
 
+deploy-traefik: check-traefik-env
 	docker-compose \
 		-f docs/traefik.yml \
 		-f docs/traefik.deploy.yml \
 	config > docker-stack-traefik.yml
 	docker stack deploy -c docker-stack-traefik.yml $(TRAEFIK_STACKNAME)
 
+deploy-orchestrator: check-orchestrator-env
 	docker-compose \
 		-f docs/portainer.yml \
 		-f docs/swarmpit.yml \
@@ -79,6 +82,8 @@ deploy: check-traefik-env check-orchestrator-env check-postgres-env
 	docker-auto-labels docker-stack-orchestrator.yml
 	docker stack deploy -c docker-stack-orchestrator.yml $(ORCHESTRATOR_STACKNAME)
 	
+
+deploy-all: deploy-postgres deploy-traefik deploy-orchestrator
 
 ip-tables:
 	# traefik TCP routing is limited:
