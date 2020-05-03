@@ -27,6 +27,7 @@ services:
       - '--entryPoints.pg.address=:5432'
       - '--entryPoints.mongo-dev.address=:${MONGO_PORT_DEV}'
       - '--entryPoints.mongo-qa.address=:${MONGO_PORT_QA}'
+      - '--entryPoints.mongo-prod.address=:${MONGO_PORT_PROD}'
       # DEBUG
       - '--log.level=INFO'
 

@@ -29,6 +29,10 @@ services:
         published: ${MONGO_PORT_QA}
         protocol: tcp
         mode: host
+      - target: ${MONGO_PORT_PROD}
+        published: ${MONGO_PORT_PROD}
+        protocol: tcp
+        mode: host
     networks:
       - default
       - traefik
