@@ -108,7 +108,7 @@ ip-tables:
 	sudo iptables -A DOCKER -d $(TRAEFIK_CONTAINER_IP)/32 ! -i docker_gwbridge -s 83.166.154.157 -o docker_gwbridge -p tcp -m tcp --dport $(MONGO_PORT_DEV) -j ACCEPT
 	sudo iptables -A DOCKER -d $(TRAEFIK_CONTAINER_IP)/32 ! -i docker_gwbridge -s 46.140.105.162 -o docker_gwbridge -p tcp -m tcp --dport $(MONGO_PORT_DEV) -j ACCEPT
 	sudo iptables -A DOCKER -d $(TRAEFIK_CONTAINER_IP)/32 ! -i docker_gwbridge -s 127.0.0.1 -o docker_gwbridge -p tcp -m tcp --dport $(MONGO_PORT_DEV) -j ACCEPT
-	sudo iptables -A DOCKER -i eth0 -p tcp -m tcp --dport 27017 -j DROP
+	sudo iptables -A DOCKER -i eth0 -p tcp -m tcp --dport $(MONGO_PORT_DEV) -j DROP
 
 	## MONGO QA
 	# clean existing rules
@@ -121,7 +121,7 @@ ip-tables:
 	sudo iptables -A DOCKER -d $(TRAEFIK_CONTAINER_IP)/32 ! -i docker_gwbridge -s 83.166.154.157 -o docker_gwbridge -p tcp -m tcp --dport $(MONGO_PORT_QA) -j ACCEPT
 	sudo iptables -A DOCKER -d $(TRAEFIK_CONTAINER_IP)/32 ! -i docker_gwbridge -s 46.140.105.162 -o docker_gwbridge -p tcp -m tcp --dport $(MONGO_PORT_QA) -j ACCEPT
 	sudo iptables -A DOCKER -d $(TRAEFIK_CONTAINER_IP)/32 ! -i docker_gwbridge -s 127.0.0.1 -o docker_gwbridge -p tcp -m tcp --dport $(MONGO_PORT_QA) -j ACCEPT
-	sudo iptables -A DOCKER -i eth0 -p tcp -m tcp --dport 27017 -j DROP
+	sudo iptables -A DOCKER -i eth0 -p tcp -m tcp --dport $(MONGO_PORT_QA) -j DROP
 
 	## MONGO PROD
 	# clean existing rules
@@ -134,10 +134,10 @@ ip-tables:
 	sudo iptables -A DOCKER -d $(TRAEFIK_CONTAINER_IP)/32 ! -i docker_gwbridge -s 83.166.154.157 -o docker_gwbridge -p tcp -m tcp --dport $(MONGO_PORT_PROD) -j ACCEPT
 	sudo iptables -A DOCKER -d $(TRAEFIK_CONTAINER_IP)/32 ! -i docker_gwbridge -s 46.140.105.162 -o docker_gwbridge -p tcp -m tcp --dport $(MONGO_PORT_PROD) -j ACCEPT
 	sudo iptables -A DOCKER -d $(TRAEFIK_CONTAINER_IP)/32 ! -i docker_gwbridge -s 127.0.0.1 -o docker_gwbridge -p tcp -m tcp --dport $(MONGO_PORT_PROD) -j ACCEPT
-	sudo iptables -A DOCKER -i eth0 -p tcp -m tcp --dport 27017 -j DROP
+	sudo iptables -A DOCKER -i eth0 -p tcp -m tcp --dport $(MONGO_PORT_PROD) -j DROP
 
 	# check result
-	sudo iptables --list | grep -A 24 "Chain DOCKER ("
+	sudo iptables --list | grep -A 14 "Chain DOCKER ("
 
 
 ###
