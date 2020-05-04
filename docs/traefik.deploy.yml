@@ -28,6 +28,7 @@ services:
       - '--entryPoints.mongo-dev.address=:${MONGO_PORT_DEV}'
       - '--entryPoints.mongo-qa.address=:${MONGO_PORT_QA}'
       - '--entryPoints.mongo-prod.address=:${MONGO_PORT_PROD}'
+      - '--entryPoints.mongo-extqa.address=:${MONGO_PORT_EXTQA}'
       # DEBUG
       - '--log.level=INFO'
 

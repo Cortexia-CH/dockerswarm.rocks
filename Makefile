@@ -136,6 +136,19 @@ ip-tables:
 	sudo iptables -A DOCKER -d $(TRAEFIK_CONTAINER_IP)/32 ! -i docker_gwbridge -s 127.0.0.1 -o docker_gwbridge -p tcp -m tcp --dport $(MONGO_PORT_PROD) -j ACCEPT
 	sudo iptables -A DOCKER -i eth0 -p tcp -m tcp --dport $(MONGO_PORT_PROD) -j DROP
 
+	## MONGO EXTQA
+	# clean existing rules
+	sudo iptables -D DOCKER -d $(TRAEFIK_CONTAINER_IP)/32 ! -i docker_gwbridge -o docker_gwbridge -p tcp -m tcp --dport $(MONGO_PORT_EXTQA) -j ACCEPT || true
+	sudo iptables -D DOCKER -d $(TRAEFIK_CONTAINER_IP)/32 ! -i docker_gwbridge -s 83.166.154.157 -o docker_gwbridge -p tcp -m tcp --dport $(MONGO_PORT_EXTQA) -j ACCEPT || true
+	sudo iptables -D DOCKER -d $(TRAEFIK_CONTAINER_IP)/32 ! -i docker_gwbridge -s 46.140.105.162 -o docker_gwbridge -p tcp -m tcp --dport $(MONGO_PORT_EXTQA) -j ACCEPT || true
+	sudo iptables -D DOCKER -d $(TRAEFIK_CONTAINER_IP)/32 ! -i docker_gwbridge -s 127.0.0.1 -o docker_gwbridge -p tcp -m tcp --dport $(MONGO_PORT_EXTQA) -j ACCEPT || true
+	sudo iptables -D DOCKER -i eth0 -p tcp -m tcp --dport $(MONGO_PORT_EXTQA) -j DROP || true
+	# restrict acces
+	sudo iptables -A DOCKER -d $(TRAEFIK_CONTAINER_IP)/32 ! -i docker_gwbridge -s 83.166.154.157 -o docker_gwbridge -p tcp -m tcp --dport $(MONGO_PORT_EXTQA) -j ACCEPT
+	sudo iptables -A DOCKER -d $(TRAEFIK_CONTAINER_IP)/32 ! -i docker_gwbridge -s 46.140.105.162 -o docker_gwbridge -p tcp -m tcp --dport $(MONGO_PORT_EXTQA) -j ACCEPT
+	sudo iptables -A DOCKER -d $(TRAEFIK_CONTAINER_IP)/32 ! -i docker_gwbridge -s 127.0.0.1 -o docker_gwbridge -p tcp -m tcp --dport $(MONGO_PORT_EXTQA) -j ACCEPT
+	sudo iptables -A DOCKER -i eth0 -p tcp -m tcp --dport $(MONGO_PORT_EXTQA) -j DROP
+
 	# check result
 	sudo iptables --list | grep -A 14 "Chain DOCKER ("
 
