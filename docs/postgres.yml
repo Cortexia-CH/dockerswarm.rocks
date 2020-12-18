@@ -26,7 +26,7 @@ services:
     command: postgres -N 500
 
   pgadmin:
-    image: dpage/pgadmin4
+    image: dpage/pgadmin4:4.25
     environment:
       - PGADMIN_DEFAULT_EMAIL=${PGADMIN_DEFAULT_EMAIL}
       - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_DEFAULT_PASSWORD}
